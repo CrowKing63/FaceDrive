@@ -3,6 +3,7 @@ import Foundation
 enum FaceAction: String, CaseIterable, Identifiable, Codable {
     case none = "None"
     case leftClick = "Left Click"
+    case leftDragToggle = "Left Drag Toggle"
     case rightClick = "Right Click"
     case scrollUp = "Scroll Up"
     case scrollDown = "Scroll Down"

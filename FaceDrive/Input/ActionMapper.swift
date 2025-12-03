@@ -19,8 +19,8 @@ class ActionMapper: ObservableObject {
     private var previousState = ExpressionState()
     
     // Hold state tracking
-    private var isLeftButtonHeld = false
-    private var isRightButtonHeld = false
+    private var isDragging = false
+    private var previousActiveActions: Set<FaceAction> = []
     
     // Debug log throttling
     private var lastDebugLogTime: Date?
@@ -74,16 +74,10 @@ class ActionMapper: ObservableObject {
             
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                if self.isLeftButtonHeld || self.isRightButtonHeld {
-                    print("⚠️ Safety Kill Switch Triggered! Releasing all buttons.")
-                    if self.isLeftButtonHeld {
-                        self.inputController.click(button: .left, down: false)
-                        self.isLeftButtonHeld = false
-                    }
-                    if self.isRightButtonHeld {
-                        self.inputController.click(button: .right, down: false)
-                        self.isRightButtonHeld = false
-                    }
+                if self.isDragging {
+                    print("⚠️ Safety Kill Switch Triggered! Releasing drag.")
+                    self.inputController.click(button: .left, down: false)
+                    self.isDragging = false
                     NSSound.beep()
                 }
             }
@@ -92,32 +86,21 @@ class ActionMapper: ObservableObject {
         // Monitor mouse movement
         NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] event in
             guard let self = self else { return }
-            if self.isLeftButtonHeld {
+            if self.isDragging {
                 let pos = NSEvent.mouseLocation
                 if let screen = NSScreen.main {
                     let cgY = screen.frame.height - pos.y
                     self.inputController.sendDragEvent(position: CGPoint(x: pos.x, y: cgY), button: .left)
-                }
-            } else if self.isRightButtonHeld {
-                let pos = NSEvent.mouseLocation
-                if let screen = NSScreen.main {
-                    let cgY = screen.frame.height - pos.y
-                    self.inputController.sendDragEvent(position: CGPoint(x: pos.x, y: cgY), button: .right)
                 }
             }
         }
     }
     
     private func resetAllHeldButtons() {
-        if isLeftButtonHeld {
+        if isDragging {
             inputController.click(button: .left, down: false)
-            isLeftButtonHeld = false
-            print("Emergency: Released held left button")
-        }
-        if isRightButtonHeld {
-            inputController.click(button: .right, down: false)
-            isRightButtonHeld = false
-            print("Emergency: Released held right button")
+            isDragging = false
+            print("Emergency: Released drag")
         }
     }
     
@@ -308,44 +291,66 @@ class ActionMapper: ObservableObject {
             self.isPerformingAction = hasActiveActions
         }
         
+        // Detect Rising Edges
+        let newActions = activeActions.subtracting(previousActiveActions)
+        previousActiveActions = activeActions
+        
         for action in FaceAction.allCases {
             if action == .none { continue }
-            updateActionState(action: action, shouldBeActive: activeActions.contains(action))
+            updateActionState(action: action, isActive: activeActions.contains(action), isRisingEdge: newActions.contains(action))
         }
     }
     
-    private func updateActionState(action: FaceAction, shouldBeActive: Bool) {
-        // Handle Toggle Actions (Clicks)
+    private func updateActionState(action: FaceAction, isActive: Bool, isRisingEdge: Bool) {
+        // Handle Instant Actions & Toggles
         if action == .leftClick {
-            if shouldBeActive && !isLeftButtonHeld {
-                inputController.click(button: .left, down: true)
-                isLeftButtonHeld = true
+            if isRisingEdge {
+                if isDragging {
+                    // Click releases drag
+                    inputController.click(button: .left, down: false)
+                    isDragging = false
+                    print("Left Mouse UP (Drag Released by Click)")
+                } else {
+                    // Instant Click
+                    inputController.click(button: .left, down: true)
+                    inputController.click(button: .left, down: false)
+                    print("Left Click (Instant)")
+                }
                 updateLastAction(action)
-                print("Left Mouse DOWN")
-            } else if !shouldBeActive && isLeftButtonHeld {
-                inputController.click(button: .left, down: false)
-                isLeftButtonHeld = false
-                print("Left Mouse UP")
+            }
+            return
+        }
+        
+        if action == .leftDragToggle {
+            if isRisingEdge {
+                if isDragging {
+                    // Release Drag
+                    inputController.click(button: .left, down: false)
+                    isDragging = false
+                    print("Left Drag Released")
+                } else {
+                    // Start Drag
+                    inputController.click(button: .left, down: true)
+                    isDragging = true
+                    print("Left Drag Started")
+                }
+                updateLastAction(action)
             }
             return
         }
         
         if action == .rightClick {
-            if shouldBeActive && !isRightButtonHeld {
+            if isRisingEdge {
                 inputController.click(button: .right, down: true)
-                isRightButtonHeld = true
-                updateLastAction(action)
-                print("Right Mouse DOWN")
-            } else if !shouldBeActive && isRightButtonHeld {
                 inputController.click(button: .right, down: false)
-                isRightButtonHeld = false
-                print("Right Mouse UP")
+                print("Right Click (Instant)")
+                updateLastAction(action)
             }
             return
         }
         
         // Handle Continuous/Discrete Actions
-        if shouldBeActive {
+        if isActive {
             perform(action: action)
         }
     }
@@ -483,7 +488,7 @@ class ActionMapper: ObservableObject {
             inputController.pressKey(keyCode: 9, modifiers: .maskCommand)
         case .undo:
             inputController.pressKey(keyCode: 6, modifiers: .maskCommand)
-        case .leftClick, .rightClick, .none, .scrollUp, .scrollDown, .moveLeft, .moveRight, .moveUp, .moveDown:
+        case .leftClick, .leftDragToggle, .rightClick, .none, .scrollUp, .scrollDown, .moveLeft, .moveRight, .moveUp, .moveDown:
             break
         }
         
