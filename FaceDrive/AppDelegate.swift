@@ -16,7 +16,7 @@ final class AppServices {
     private init() {
         cameraManager.setDelegate(
             faceDetector,
-            queue: DispatchQueue(label: "com.facedrive.camera.delegate", qos: .userInteractive)
+            queue: DispatchQueue(label: "com.magicscroll.camera.delegate", qos: .userInteractive)
         )
         cameraManager.start()
 
@@ -82,20 +82,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "face.smiling",
-                                   accessibilityDescription: "FaceDrive")
+                                   accessibilityDescription: "MagicScroll")
         }
 
         rebuildMenu()
 
-        // Subscribe to profile changes to rebuild the menu
-        actionMapper.$profiles
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.rebuildMenu()
-            }
-            .store(in: &cancellables)
-
-        actionMapper.$activeProfileID
+        actionMapper.$isPaused
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.rebuildMenu()
@@ -103,13 +95,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .store(in: &cancellables)
             
         // Dynamic Icon Updates
-        // Dynamic Icon Updates (3 States based on Calibration)
-        Publishers.CombineLatest3(actionMapper.$isStartupCalibrated, actionMapper.$isPerformingAction, actionMapper.$isCalibrating)
+        // Dynamic Icon Updates (4 States: Paused, Calibrating, Active, Idle)
+        Publishers.CombineLatest4(actionMapper.$isPaused, actionMapper.$isStartupCalibrated, actionMapper.$isPerformingAction, actionMapper.$isCalibrating)
             .receive(on: RunLoop.main)
-            .sink { [weak self] (isCalibrated, isActive, isCalibrating) in
+            .sink { [weak self] (isPaused, isCalibrated, isActive, isCalibrating) in
                 guard let self = self, let button = self.statusItem.button else { return }
                 
-                if !isCalibrated || isCalibrating {
+                if isPaused {
+                    // Paused: Gray Dashed Face (like face not detected)
+                    button.image = NSImage(systemSymbolName: "face.dashed", accessibilityDescription: "Paused")
+                    button.contentTintColor = .secondaryLabelColor
+                } else if !isCalibrated || isCalibrating {
                     // Not Calibrated or Calibrating: Gray Dashed Face
                     button.image = NSImage(systemSymbolName: "face.dashed", accessibilityDescription: "Calibrating")
                     button.contentTintColor = .secondaryLabelColor
@@ -146,28 +142,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         calibrateItem.target = self
         menu.addItem(calibrateItem)
         
-        menu.addItem(.separator())
-
-        // --- Profiles Submenu ---
-        let profilesMenuItem = NSMenuItem(title: "Profiles", action: nil, keyEquivalent: "")
-        let profilesMenu = NSMenu()
-
-        for profile in actionMapper.profiles {
-            let item = NSMenuItem(
-                title: profile.name,
-                action: #selector(selectProfile(_:)),
-                keyEquivalent: ""
-            )
-            item.target = self
-            item.representedObject = profile.id
-            if profile.id == actionMapper.activeProfileID {
-                item.state = .on
-            }
-            profilesMenu.addItem(item)
-        }
-
-        menu.setSubmenu(profilesMenu, for: profilesMenuItem)
-        menu.addItem(profilesMenuItem)
+        // Pause/Resume Toggle
+        let pauseItem = NSMenuItem(
+            title: actionMapper.isPaused ? "Resume" : "Pause",
+            action: #selector(togglePause(_:)),
+            keyEquivalent: ""
+        )
+        pauseItem.target = self
+        menu.addItem(pauseItem)
         
         menu.addItem(.separator())
         
@@ -197,7 +179,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
 
         let quitItem = NSMenuItem(
-            title: "Quit FaceDrive",
+            title: "Quit MagicScroll",
             action: #selector(quit),
             keyEquivalent: "q"
         )
@@ -217,13 +199,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 .environmentObject(services.actionMapper)
 
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 1200, height: 600),
+                contentRect: NSRect(x: 0, y: 0, width: 800, height: 500),
                 styleMask: [.titled, .closable, .resizable],
                 backing: .buffered,
                 defer: false
             )
             window.center()
-            window.title = "FaceDrive"
+            window.title = "MagicScroll"
             window.isReleasedWhenClosed = false
             window.contentView = NSHostingView(rootView: rootView)
             dashboardWindow = window
@@ -235,14 +217,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
     
-    @objc private func selectProfile(_ sender: NSMenuItem) {
-        if let profileID = sender.representedObject as? UUID {
-            actionMapper.selectProfile(profileID: profileID)
-        }
-    }
-    
     @objc private func calibrateFace() {
         actionMapper.calibrate()
+    }
+    
+    @objc private func togglePause(_ sender: NSMenuItem) {
+        actionMapper.isPaused.toggle()
+        rebuildMenu()
     }
 
     @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {

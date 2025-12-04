@@ -1,4 +1,4 @@
-# FaceDrive
+# MagicScroll
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-macOS-lightgrey.svg" alt="Platform: macOS">
@@ -6,85 +6,68 @@
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT">
 </p>
 
-**FaceDrive** is a macOS application that enables hands-free computer control using facial expressions. By leveraging Apple's Vision framework for real-time facial landmark detection, FaceDrive translates natural facial movements into mouse and keyboard actions, providing an accessible and intuitive way to interact with your Mac.
+**MagicScroll** is a macOS application that enables hands-free scrolling using facial expressions. By leveraging Apple's Vision framework for real-time facial landmark detection, MagicScroll translates natural facial movements into scroll actions, providing an accessible and intuitive way to browse content on your Mac.
 
 ## ✨ Features
 
-### 🎭 Comprehensive Expression Detection
-FaceDrive detects a wide range of facial expressions and translates them into computer actions:
+### 🎭 Expression Detection
+MagicScroll detects two simple facial expressions for hands-free scrolling:
 
-- **Eye Control**
-  - Eye Closed / Wink detection with customizable hold duration
-  - Squint detection for subtle control
+- **Mouth Open**: Scroll down action
+- **Eye Close**: Scroll up action (with duration threshold to prevent blinks from triggering)
 
-- **Mouth Expressions**
-  - Mouth Open/Close detection
-  - Smile (mouth width) detection
-  - Pucker (lips forward) detection
-  - Lips Pressed detection
-  - Directional mouth movement (left/right)
+### 🎯 Core Features
 
-- **Eyebrow Control**
-  - Eyebrow Raise detection
-  - Independent brow tracking for nuanced control
-
-### 🖱️ Extensive Action Mapping
-Each facial expression can be mapped to various computer actions:
-
-- **Mouse Actions**: Left Click, Right Click, Scroll Up/Down
-- **Mouse Movement**: Move Left/Right/Up/Down
-- **Keyboard Keys**: Enter, Escape, Space, Arrow Keys
-- **Shortcuts**: Copy (Cmd+C), Paste (Cmd+V), Undo (Cmd+Z)
-
-### 🎯 Advanced Features
-
-#### Gesture Combinations
-Create complex gesture combinations by pairing two facial expressions for a single action (e.g., "Eyebrow Raise + Mouth Open" → Left Click). This allows for more sophisticated control workflows and reduces accidental triggers.
+#### Pause/Resume Control
+- **Menu Bar Toggle**: Instantly pause and resume facial expression recognition
+- **Visual Indicator**: Menu bar icon changes to a dashed face outline when paused
+- **Quick Access**: Easily toggle between active and paused states from the menu
 
 #### Calibration System
-- **Automatic Startup Calibration**: Automatically calibrates to your neutral facial expression on launch
-- **Manual Calibration**: Recalibrate anytime with a single button click
+- **Automatic Startup Calibration**: Automatically calibrates to your neutral facial expression on launch (3-second calibration period)
+- **Manual Calibration**: Recalibrate anytime via menu bar or dashboard button
 - **Zeroing Baseline**: All expression values are normalized relative to your neutral face, ensuring consistent detection across users and sessions
+- **Visual Feedback**: Menu bar icon shows calibration status with a dashed face outline
 
 #### Sensitivity Controls
-Fine-tune detection sensitivity with adjustable gain controls:
-- **Eye Gain**: Adjust eye openness/closure sensitivity (10.0 - 100.0)
-- **Mouth Height Gain**: Control mouth open/close sensitivity (0.5 - 3.0)
-- **Mouth Width Gain**: Adjust smile detection sensitivity (0.5 - 3.0)
-- **Eyebrow Gain**: Fine-tune eyebrow raise sensitivity (1.0 - 10.0)
+Fine-tune detection sensitivity with adjustable parameters:
+- **Mouth Gain**: Control mouth open/close sensitivity (0.5 - 30.0)
+- **Eye Gain**: Adjust eye openness/closure sensitivity (1.0 - 50.0)
 - **Smoothing Factor**: Reduce jitter with adjustable smoothing (0.0 - 0.95)
-- **Wink Hold Duration**: Set how long a wink must be held before triggering (0.0 - 1.0s)
+- **Scroll Speed**: Adjust scrolling speed (1.0 - 100.0)
+- **Duration Controls**: Set how long expressions must be held before triggering (prevents accidental triggers)
 
-#### Profile Management
-- Create and save multiple configuration profiles
-- Switch between profiles for different use cases
-- Delete and manage profiles easily
-- Persistent storage of all settings
+#### Persistent Settings
+- All settings automatically saved to UserDefaults
+- Configuration persists across app launches
+- No manual save required
 
 #### Trigger Direction Control
 For each expression, choose whether to trigger when the value goes:
 - **Above** a threshold (e.g., mouth opens more than 30%)
 - **Below** a threshold (e.g., eye closes below 20%)
 
-This provides flexibility in how actions are triggered based on your preferred interaction style.
-
 ### 🎨 User Interface
 
 #### Menu Bar Integration
-- Lives in your menu bar for easy access
-- Minimal system footprint
-- Quick access to all controls
+- **Always Accessible**: Lives in your menu bar for instant access
+- **Dynamic Icon States**: Visual feedback for different app states
+  - 🟢 Green smiling face: Expression active
+  - ⚪ White smiling face: Ready and idle
+  - ⚫ Gray dashed face: Paused or calibrating
+- **Quick Controls**: 
+  - Pause/Resume toggle
+  - Manual calibration
+  - Dashboard access
+- **Minimal Footprint**: Runs efficiently in the background
 
 #### Real-Time Dashboard
 - **Live Camera Preview**: See your face with overlaid facial landmarks
 - **Expression Meters**: Real-time bars showing current expression values
 - **Visual Feedback**: Active expressions highlighted in green
 - **Threshold Markers**: Visual indicators showing trigger thresholds
-- **Last Action Display**: Shows the most recently triggered action
-
-#### Tabbed Interface
-- **Expressions Tab**: Configure individual facial expression actions and thresholds
-- **Combos Tab**: Create and manage gesture combinations
+- **Compact Design**: Simplified interface focused on essential controls
+- **Calibration Button**: Quick access to manual calibration
 
 ## 🔧 Technical Architecture
 
@@ -101,8 +84,8 @@ This provides flexibility in how actions are triggered based on your preferred i
 ### Project Structure
 
 ```
-FaceDrive/
-├── FaceDriveApp.swift          # Main app entry point
+MagicScroll/
+├── MagicScrollApp.swift        # Main app entry point
 ├── AppDelegate.swift           # Application lifecycle & menu bar
 ├── ContentView.swift           # Main SwiftUI view container
 ├── DashboardView.swift         # Control panel UI
@@ -166,17 +149,17 @@ FaceDrive/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/FaceDrive.git
-   cd FaceDrive
+   git clone https://github.com/yourusername/MagicScroll.git
+   cd MagicScroll
    ```
 
 2. **Open in Xcode**
    ```bash
-   open FaceDrive.xcodeproj
+   open MagicScroll.xcodeproj
    ```
 
 3. **Build and Run**
-   - Select the FaceDrive scheme
+   - Select the MagicScroll scheme
    - Click the Run button (⌘R) or Product → Run
    - The app will launch and appear in your menu bar
 
@@ -184,140 +167,140 @@ FaceDrive/
 
 1. **Grant Camera Permission**
    - On first launch, macOS will request camera access
-   - Click "OK" to allow FaceDrive to use your camera
+   - Click "OK" to allow MagicScroll to use your camera
 
 2. **Grant Accessibility Permission** ⚠️ **Critical Step**
-   - FaceDrive requires Accessibility permissions to control your mouse and keyboard
+   - MagicScroll requires Accessibility permissions to control scrolling
    - Go to **System Settings** → **Privacy & Security** → **Accessibility**
-   - Find "FaceDrive" in the list and enable it
+   - Find "MagicScroll" (or "FaceDrive") in the list and enable it
    - You may need to restart the app after granting permission
 
 3. **Automatic Calibration**
-   - When you first open the dashboard, FaceDrive will calibrate to your neutral expression
-   - Keep a neutral face during this brief calibration period
-   - A calibration overlay will appear and disappear automatically
+   - On first launch, MagicScroll automatically calibrates to your neutral expression
+   - Keep a relaxed, neutral face for 3 seconds
+   - The menu bar icon will show a dashed face during calibration
+   - Icon changes to a smiling face when ready
 
-4. **Configure Your First Action**
-   - Click the FaceDrive icon in the menu bar
-   - Choose an expression (e.g., "Smile")
-   - Select an action from the dropdown (e.g., "Left Click")
-   - Adjust the sensitivity slider if needed
-   - Try the expression to trigger the action!
+4. **Start Using**
+   - Open your mouth to scroll down
+   - Close your eyes (hold briefly) to scroll up
+   - Open the dashboard to adjust sensitivity if needed
+   - Use the pause feature when you need a break
 
 ## 📖 Usage Guide
 
-### Basic Configuration
+### Quick Start
 
-1. **Open the Dashboard**
-   - Click the FaceDrive menu bar icon
-   - The dashboard window will appear
+1. **Launch MagicScroll**
+   - The app appears in your menu bar
+   - Automatic calibration runs for 3 seconds (keep a neutral face)
+   - Menu bar icon shows calibration status (dashed face → smiling face)
 
-2. **Configure an Expression**
-   - Find the expression you want to use (e.g., "Mouth Open")
-   - Select an action from the dropdown menu
-   - Watch the real-time meter to see your current expression value
-   - The red line shows the trigger threshold
-   - Click "Set" to auto-set the threshold to your current expression value
+2. **Open the Dashboard**
+   - Click the MagicScroll menu bar icon
+   - Select "Open Dashboard"
+   - The dashboard window appears with live camera preview
 
-3. **Adjust Sensitivity**
-   - Use the "Sens:" slider to adjust the trigger threshold
-   - Lower values = more sensitive (easier to trigger)
-   - Higher values = less sensitive (harder to trigger)
+3. **Start Scrolling**
+   - **Mouth Open**: Scroll down
+   - **Eye Close** (hold for ~0.5s): Scroll up
+   - Watch the expression meters for real-time feedback
 
-4. **Change Trigger Direction**
-   - Click the "< (Less)" or "> (More)" button
-   - **"< (Less)"**: Triggers when value drops *below* threshold (e.g., for wink/eye close)
-   - **"> (More)"**: Triggers when value rises *above* threshold (e.g., for mouth open)
+### Pause/Resume
+
+**Pausing Expression Recognition:**
+1. Click the MagicScroll menu bar icon
+2. Select "Pause"
+3. The menu bar icon changes to a gray dashed face
+4. All facial expression detection is suspended
+
+**Resuming:**
+1. Click the menu bar icon
+2. Select "Resume"
+3. The icon returns to normal (smiling face)
+4. Expression detection resumes immediately
+
+**Use Cases for Pause:**
+- Taking a break without quitting the app
+- Temporarily disabling scrolling during video calls
+- Preventing accidental triggers while eating or talking
 
 ### Calibration
 
-Calibration is essential for accurate detection. It sets your neutral baseline.
+Calibration sets your neutral facial expression baseline for accurate detection.
 
-**When to Calibrate:**
-- After launching the app (done automatically)
-- When switching users
-- When lighting conditions change significantly
-- When expression detection feels "off"
+**Automatic Calibration:**
+- Runs automatically on app launch
+- Takes 3 seconds
+- Menu bar icon shows dashed face during calibration
+- Keep a relaxed, neutral expression
 
-**How to Calibrate:**
-1. Ensure you have a neutral expression (relaxed face)
-2. Click the "Calibrate Face (Neutral)" button
-3. Hold your neutral expression for 1-2 seconds
-4. All expression meters should return to near-zero
+**Manual Calibration:**
+1. Click the menu bar icon
+2. Select "Calibrate Face (Neutral)"
+3. Keep a neutral expression for 3 seconds
+4. Icon changes from dashed to smiling when complete
 
-### Global Sensitivity Adjustments
+**When to Recalibrate:**
+- Expression detection feels inaccurate
+- Lighting conditions change significantly
+- Switching users
+- Camera position changes
 
-At the top of the dashboard, you'll find global gain controls:
+### Adjusting Sensitivity
 
-- **Eye**: Increases/decreases eye detection sensitivity (inverted scale)
-- **Mouth H**: Adjusts mouth opening/closing sensitivity
-- **Mouth W**: Adjusts smile (mouth width) sensitivity
-- **Eyebrow**: Adjusts eyebrow raise sensitivity
-- **Smooth**: Controls smoothing factor (higher = more stable but less responsive)
-- **Wink**: Sets how long you must hold a wink before it triggers
+**Expression Thresholds:**
+- Each expression has a sensitivity slider in the dashboard
+- Lower threshold = easier to trigger
+- Higher threshold = harder to trigger
+- Watch the real-time meter to find the right value
 
-### Creating Gesture Combinations
+**Trigger Direction:**
+- **"< (Less)"**: Triggers when value drops *below* threshold (for eye close)
+- **"> (More)"**: Triggers when value rises *above* threshold (for mouth open)
 
-Gesture combinations allow multiple expressions to be active simultaneously before triggering an action.
+**Global Controls:**
+- **Mouth Gain**: Overall mouth detection sensitivity
+- **Eye Gain**: Overall eye detection sensitivity
+- **Smoothing**: Reduces jitter (higher = smoother but less responsive)
+- **Scroll Speed**: How fast scrolling occurs
+- **Duration**: How long to hold expression before triggering
 
-1. Switch to the "Combos" tab
-2. Click "Add New Combination"
-3. Select the first expression (e.g., "Eyebrow Raise")
-4. Select the second expression (e.g., "Smile")
-5. Choose the action to trigger
-6. Click "Add Combination"
+### Settings Persistence
 
-**Note:** Both expressions must be active (above/below their respective thresholds) for the combo to trigger.
+All your settings are automatically saved:
+- Configuration changes save automatically after 1 second
+- Settings persist across app launches
+- No manual save required
+- Calibration values are preserved
 
-### Profile Management
+## 🎮 Use Cases
 
-Profiles let you save different configurations for various use cases.
+### Hands-Free Web Browsing
+Perfect for reading long articles, social media feeds, or documentation:
+- **Mouth Open**: Scroll down through content
+- **Eye Close**: Scroll back up
+- **Pause**: Take a break or interact with keyboard/mouse normally
 
-**Creating a Profile:**
-1. Configure your expressions and settings
-2. Type a name in the "Profile Name" field
-3. Click "Save"
-
-**Switching Profiles:**
-- Use the profile dropdown to select a saved profile
-- All settings will immediately switch to that profile
-
-**Deleting a Profile:**
-- Select the profile you want to delete
-- Click the trash icon
-- Confirm deletion
-
-**Note:** You cannot delete your last remaining profile.
-
-## 🎮 Example Use Cases
-
-### Hands-Free Browsing
-- **Smile** → Left Click (click links)
-- **Mouth Open** → Scroll Down
-- **Mouth Close** (Lips Pressed) → Scroll Up
-- **Mouth Right** → Move Right
-- **Mouth Left** → Move Left
-
-### Gaming
-- **Wink Left** → Left Click (fire)
-- **Wink Right** → Right Click (aim)
-- **Mouth Left** → Move Left
-- **Mouth Right** → Move Right
-- **Eyebrow Raise** → Jump (Space)
+### Reading Documents
+Navigate through PDFs, ebooks, or long documents:
+- **Mouth Open**: Move to next page/section
+- **Eye Close**: Return to previous content
+- **Adjustable Speed**: Fine-tune scroll speed for comfortable reading
 
 ### Accessibility
-- **Smile** → Enter
-- **Pucker** → Escape
-- **Eye Close** → Left Click
-- **Eyebrow Raise + Smile** → Copy
-- **Eyebrow Raise + Pucker** → Paste
+Provides hands-free scrolling for users with limited mobility:
+- **Simple Expressions**: Only two easy-to-perform expressions needed
+- **Customizable Sensitivity**: Adjust to individual capabilities
+- **Duration Controls**: Prevent accidental triggers
+- **Pause Feature**: Easy control when assistance is needed
 
-### Document Editing
-- **Mouth Open** → Arrow Down
-- **Lips Pressed** → Arrow Up
-- **Mouth Right** → Arrow Right
-- **Mouth Left** → Arrow Left
-- **Smile** → Space
+### Multitasking
+Scroll while your hands are busy:
+- Reading recipes while cooking
+- Following tutorials while working
+- Browsing content while eating
+- Reviewing documents while taking notes
 
 ## 🐛 Troubleshooting
 
@@ -418,15 +401,22 @@ For questions, suggestions, or issues, please:
 
 ## 🗺️ Roadmap
 
-Potential future features:
-- [ ] Head tracking for mouse cursor control
-- [ ] Custom gesture recording
-- [ ] Multi-monitor support
-- [ ] Export/import configuration profiles
-- [ ] macOS accessibility API integration
-- [ ] Touch Bar support
-- [ ] Voice command integration
-- [ ] Advanced ML model for custom gesture training
+### Completed Features
+- [x] Pause/Resume toggle with visual feedback
+- [x] Automatic and manual calibration
+- [x] Real-time expression visualization
+- [x] Menu bar integration with dynamic icons
+- [x] Automatic settings persistence
+
+### Planned Features
+- [ ] Additional expression options (head tilt, gaze direction)
+- [ ] Keyboard shortcut for pause/resume
+- [ ] Export/import configuration settings
+- [ ] Multi-monitor scroll support
+- [ ] Customizable scroll acceleration curves
+- [ ] Statistics and usage tracking
+- [ ] Dark mode optimizations
+- [ ] Improved low-light performance
 
 ---
 

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		0D564CF62EDE79D500002A3A /* FaceDrive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceDrive.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D564CF62EDE79D500002A3A /* MagicScroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicScroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		0D564CF72EDE79D500002A3A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0D564CF62EDE79D500002A3A /* FaceDrive.app */,
+				0D564CF62EDE79D500002A3A /* MagicScroll.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,7 +67,7 @@
 			packageProductDependencies = (
 			);
 			productName = FaceDrive;
-			productReference = 0D564CF62EDE79D500002A3A /* FaceDrive.app */;
+			productReference = 0D564CF62EDE79D500002A3A /* MagicScroll.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -270,15 +270,16 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"FaceDrive needs camera access to track facial expressions.\"";
+				INFOPLIST_KEY_CFBundleDisplayName = MagicScroll;
+				INFOPLIST_KEY_NSCameraUsageDescription = "\"MagicScroll needs camera access to track facial expressions.\"";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Uitaek-Choi.FaceDrive";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Uitaek-Choi.MagicScroll";
+				PRODUCT_NAME = MagicScroll;
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -314,15 +315,16 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"FaceDrive needs camera access to track facial expressions.\"";
+				INFOPLIST_KEY_CFBundleDisplayName = MagicScroll;
+				INFOPLIST_KEY_NSCameraUsageDescription = "\"MagicScroll needs camera access to track facial expressions.\"";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Uitaek-Choi.FaceDrive";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Uitaek-Choi.MagicScroll";
+				PRODUCT_NAME = MagicScroll;
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

@@ -1,6 +1,6 @@
 //
-//  FaceDriveApp.swift
-//  FaceDrive
+//  MagicScrollApp.swift
+//  MagicScroll
 //
 //  Created by 최의택 on 12/2/25.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct FaceDriveApp: App {
+struct MagicScrollApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
