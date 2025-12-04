@@ -31,6 +31,7 @@ class ActionMapper: ObservableObject {
     
     // Debounce
     private var lastActionTime: [FaceAction: Date] = [:]
+    private var lastClickTime: Date = Date.distantPast // For click debounce
     private let clickCooldown: TimeInterval = 0.15
     
     private var cancellables = Set<AnyCancellable>()
@@ -302,9 +303,18 @@ class ActionMapper: ObservableObject {
     }
     
     private func updateActionState(action: FaceAction, isActive: Bool, isRisingEdge: Bool) {
+        let now = Date()
+        
         // Handle Instant Actions & Toggles
         if action == .leftClick {
             if isRisingEdge {
+                // Debounce check (0.1s)
+                if now.timeIntervalSince(lastClickTime) < 0.1 {
+                    print("Left Click Ignored (Debounce)")
+                    return
+                }
+                lastClickTime = now
+                
                 if isDragging {
                     // Click releases drag
                     inputController.click(button: .left, down: false)
@@ -323,6 +333,12 @@ class ActionMapper: ObservableObject {
         
         if action == .leftDragToggle {
             if isRisingEdge {
+                // Debounce check (0.1s)
+                if now.timeIntervalSince(lastClickTime) < 0.1 {
+                    return
+                }
+                lastClickTime = now
+                
                 if isDragging {
                     // Release Drag
                     inputController.click(button: .left, down: false)
@@ -341,6 +357,12 @@ class ActionMapper: ObservableObject {
         
         if action == .rightClick {
             if isRisingEdge {
+                // Debounce check (0.1s)
+                if now.timeIntervalSince(lastClickTime) < 0.1 {
+                    return
+                }
+                lastClickTime = now
+                
                 inputController.click(button: .right, down: true)
                 inputController.click(button: .right, down: false)
                 print("Right Click (Instant)")

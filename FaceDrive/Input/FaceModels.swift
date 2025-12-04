@@ -120,7 +120,7 @@ struct ExpressionConfig: Codable {
     var eyebrowGain: Double = 30.0 // Lower than others to reduce sensitivity
     
     // Smoothing factor (0.0 = no smoothing, 1.0 = max smoothing)
-    var smoothFactor: Double = 0.7
+    var smoothFactor: Double = 0.5
     
     // Gesture Combinations
     var gestureCombos: [GestureCombo] = []
