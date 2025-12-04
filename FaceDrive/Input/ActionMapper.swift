@@ -458,14 +458,92 @@ class ActionMapper: ObservableObject {
         }
     }
     
+    private func getExpressionIntensity(action: FaceAction) -> Double {
+        // Find which expression triggers this action
+        var expression: FaceExpression?
+        var threshold: Double = 0.0
+        var isBelow: Bool = false
+        var currentValue: Double = 0.0
+        
+        // Check mapping
+        if config.mouthOpenAction == action {
+            expression = .mouthOpen
+            threshold = config.mouthOpenThreshold
+            isBelow = config.mouthOpenTriggerBelow
+            currentValue = state.mouthOpenness
+        } else if config.smileAction == action {
+            expression = .smile
+            threshold = config.smileThreshold
+            isBelow = config.smileTriggerBelow
+            currentValue = state.mouthWidth
+        } else if config.puckerAction == action {
+            expression = .pucker
+            threshold = config.puckerThreshold
+            isBelow = config.puckerTriggerBelow
+            currentValue = state.mouthPucker
+        } else if config.mouthLeftAction == action {
+            expression = .mouthLeft
+            threshold = config.mouthDirThreshold
+            isBelow = config.mouthDirTriggerBelow
+            currentValue = state.mouthLeft
+        } else if config.mouthRightAction == action {
+            expression = .mouthRight
+            threshold = config.mouthDirThreshold
+            isBelow = config.mouthDirTriggerBelow
+            currentValue = state.mouthRight
+        } else if config.eyebrowRaiseAction == action {
+            expression = .eyebrowRaise
+            threshold = config.eyebrowRaiseThreshold
+            isBelow = config.eyebrowRaiseTriggerBelow
+            currentValue = state.eyebrowRaise
+        } else if config.squintAction == action {
+            expression = .squint
+            threshold = config.squintThreshold
+            isBelow = config.squintTriggerBelow
+            currentValue = state.squint
+        } else if config.lipsPressedAction == action {
+            expression = .lipsPressed
+            threshold = config.lipsPressedThreshold
+            isBelow = config.lipsPressedTriggerBelow
+            currentValue = state.lipsPressed
+        }
+        
+        guard expression != nil else { return 1.0 }
+        
+        // Calculate intensity (0.0 to 1.0) based on how far past threshold we are
+        // We assume a reasonable "max" range beyond threshold for full speed
+        // e.g. Threshold 0.3, Max 0.8 -> Range 0.5
+        
+        let range: Double = 0.5 // Default range
+        var intensity: Double = 0.0
+        
+        if isBelow {
+            // Triggered when value < threshold
+            // e.g. Threshold 0.5, Value 0.3 -> Diff 0.2 -> Intensity 0.2/0.5 = 0.4
+            let diff = threshold - currentValue
+            intensity = diff / (threshold * 0.8) // Normalize
+        } else {
+            // Triggered when value > threshold
+            // e.g. Threshold 0.3, Value 0.6 -> Diff 0.3 -> Intensity 0.3/0.5 = 0.6
+            let diff = currentValue - threshold
+            intensity = diff / range
+        }
+        
+        return min(max(intensity, 0.1), 1.0) // Clamp between 0.1 and 1.0
+    }
+    
     private func perform(action: FaceAction) {
         // Continuous Actions
         switch action {
         case .scrollDown:
-            inputController.scroll(x: 0, y: -5)
+            let intensity = getExpressionIntensity(action: action)
+            let speed = Int32(max(4.0, config.scrollSpeed * intensity))
+            inputController.scroll(x: 0, y: -speed)
             return
         case .scrollUp:
-            inputController.scroll(x: 0, y: 5)
+            let intensity = getExpressionIntensity(action: action)
+            let speed = Int32(max(4.0, config.scrollSpeed * intensity))
+            inputController.scroll(x: 0, y: speed)
             return
         case .moveLeft:
             inputController.moveMouseRelative(dx: -10, dy: 0)

@@ -124,6 +124,9 @@ struct ExpressionConfig: Codable {
     
     // Gesture Combinations
     var gestureCombos: [GestureCombo] = []
+    
+    // Scroll Settings
+    var scrollSpeed: Double = 20.0
 }
 
 struct Profile: Identifiable, Codable {
