@@ -6,7 +6,7 @@ class CameraManager: NSObject, ObservableObject {
     
     let session = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
-    private let sessionQueue = DispatchQueue(label: "com.facedrive.camera.sessionQueue")
+    private let sessionQueue = DispatchQueue(label: "com.facedrive.camera.sessionQueue", qos: .userInteractive)
     
     weak var delegate: AVCaptureVideoDataOutputSampleBufferDelegate?
     
@@ -19,7 +19,7 @@ class CameraManager: NSObject, ObservableObject {
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
             self.session.beginConfiguration()
-            self.session.sessionPreset = .high
+            self.session.sessionPreset = .vga640x480
             
             // Add Video Input
             do {

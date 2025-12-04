@@ -16,7 +16,7 @@ final class AppServices {
     private init() {
         cameraManager.setDelegate(
             faceDetector,
-            queue: DispatchQueue(label: "com.facedrive.camera.delegate")
+            queue: DispatchQueue(label: "com.facedrive.camera.delegate", qos: .userInteractive)
         )
         cameraManager.start()
 
@@ -75,6 +75,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Hide app from Dock and App Switcher; show only as a menu bar accessory
         NSApp.setActivationPolicy(.accessory)
+        
+        // Prevent App Nap / Throttling
+        ProcessInfo.processInfo.beginActivity(options: [.userInitiatedAllowingIdleSystemSleep, .latencyCritical], reason: "Face Tracking")
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
